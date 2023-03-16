@@ -46,7 +46,7 @@ defmodule ExAssignment.Todos do
     list_todos(:open)
     |> case do
       [] -> nil
-      todos ->  todos -> List.first(todos)
+      todos ->  todos |> List.first(todos)
     end
   end
 

@@ -12,8 +12,8 @@ defmodule ExAssignment.TodosFixtures do
       attrs
       |> Enum.into(%{
         done: true,
-        priority: 42,
-        title: "some title"
+        priority: Enum.random(1..100),
+        title: Faker.Lorem.Shakespeare.as_you_like_it()
       })
       |> ExAssignment.Todos.create_todo()
 
