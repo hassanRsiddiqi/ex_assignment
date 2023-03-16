@@ -24,20 +24,18 @@ defmodule ExAssignment.Todos do
 
   """
   def list_todos(type \\ nil) do
-    cond do
-      type == :open ->
-        from(t in Todo, where: not t.done, order_by: t.priority)
-        |> Repo.all()
-
-      type == :done ->
-        from(t in Todo, where: t.done, order_by: t.priority)
-        |> Repo.all()
-
-      true ->
-        from(t in Todo, order_by: t.priority)
-        |> Repo.all()
-    end
+    Todo
+    |> maybe_filter_open_todos(type)
+    |> maybe_filter_done_todos(type)
+    |> order_by(asc: :priority)
+    |> Repo.all()
   end
+
+  defp maybe_filter_open_todos(query, :open), do: query |> where([t], t.done == false)
+  defp maybe_filter_open_todos(query, _), do: query
+
+  defp maybe_filter_done_todos(query, :done), do: query |> where([t], t.done == true)
+  defp maybe_filter_done_todos(query, _), do: query
 
   @doc """
   Returns the next todo that is recommended to be done by the system.
@@ -48,7 +46,7 @@ defmodule ExAssignment.Todos do
     list_todos(:open)
     |> case do
       [] -> nil
-      todos -> Enum.take_random(todos, 1) |> List.first()
+      todos -> todos |> List.first(todos)
     end
   end
 
